@@ -2,7 +2,7 @@ streamlit
 torch>=2.1.0
 torchaudio>=2.1.0
 chatterbox-tts
-numpy
+numpy<2.0.0
 librosa
 soundfile
 pydub
