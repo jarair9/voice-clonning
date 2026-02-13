@@ -299,8 +299,7 @@ class VoiceCloningManager:
                     **kwargs
                 )
                 
-                # Simulate processing time for progress bar visibility
-                time.sleep(0.5) 
+                # Removed artificial delay for faster production performance
 
                 if success:
                     temp_files.append(chunk_path)
@@ -349,7 +348,7 @@ class VoiceCloningManager:
             print(f"Error generating direct speech: {e}")
             return None
 
-    def _split_text_into_chunks(self, text, max_chars=400):
+    def _split_text_into_chunks(self, text, max_chars=800):
         """
         Split text into chunks based on sentence boundaries.
         Ensures chunks don't exceed max_chars while maintaining semantic integrity.
