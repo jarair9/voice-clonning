@@ -10,6 +10,12 @@ from io import BytesIO
 import base64
 import warnings
 
+# Top-level error catching for Streamlit Cloud diagnostics
+try:
+    import streamlit as st
+except Exception as e:
+    print(f"FATAL: Streamlit import failed: {e}")
+
 # Suppress warnings for cleaner UI
 warnings.filterwarnings("ignore", category=UserWarning)
 warnings.filterwarnings("ignore", category=FutureWarning)
