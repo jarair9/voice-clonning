@@ -6,7 +6,7 @@ from voice_cloning_engine import VoiceCloningManager
 # Initialize the manager
 manager = VoiceCloningManager()
 
-def clone_and_generate(text, reference_audio, exaggeration, cfg_scale):
+def clone_and_generate(text, reference_audio, exaggeration, cfg_scale, temperature, seed):
     """Gradio wrapper for voice cloning and generation"""
     if not text or not reference_audio:
         return None, "Error: Please provide both text and a reference audio file."
@@ -30,7 +30,9 @@ def clone_and_generate(text, reference_audio, exaggeration, cfg_scale):
             reference_audio_path=reference_audio,
             output_path=output_path,
             exaggeration=exaggeration,
-            cfg_scale=cfg_scale
+            cfg_scale=cfg_scale,
+            temperature=temperature,
+            seed=int(seed)
         )
         
         if result_path and os.path.exists(result_path):
@@ -75,6 +77,20 @@ with gr.Blocks(theme=gr.themes.Soft()) as demo:
                     value=0.5,
                     info="Controls how closely it follows the reference voice."
                 )
+                temperature = gr.Slider(
+                    label="Temperature",
+                    minimum=0.0,
+                    maximum=2.0,
+                    step=0.1,
+                    value=0.8,
+                    info="Higher values make the voice more experimental/varied."
+                )
+                seed = gr.Number(
+                    label="Seed",
+                    value=0,
+                    precision=0,
+                    info="Set to a specific number for reproducible results."
+                )
             
             generate_btn = gr.Button("🚀 Generate Cloned Voice", variant="primary")
             
@@ -84,7 +100,7 @@ with gr.Blocks(theme=gr.themes.Soft()) as demo:
 
     generate_btn.click(
         fn=clone_and_generate,
-        inputs=[text_input, audio_input, exaggeration, cfg_scale],
+        inputs=[text_input, audio_input, exaggeration, cfg_scale, temperature, seed],
         outputs=[audio_output, status_output]
     )
     
