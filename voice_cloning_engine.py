@@ -110,6 +110,7 @@ class ChatterboxTTSWrapper:
         try:
             from chatterbox import ChatterboxTTS
             
+            print(f"📥 Loading weights for {self.device}... (Note: This downloads ~2GB on first run, please wait)")
             # Use separate method for pretrained loading
             self.model = ChatterboxTTS.from_pretrained(self.device)
             
@@ -211,9 +212,15 @@ class VoiceCloningManager:
             print(f"🧹 Cleaned up {count} old temporary files.")
 
     def initialize_chatterbox(self, model_path=None):
-        """Initialize Chatterbox TTS"""
+        """Initialize Chatterbox TTS with logging"""
+        print("🚀 Starting engine initialization...")
         success = self.chatterbox.load_model(model_path)
         self.chatterbox_loaded = success
+        if success:
+            print("✅ Engine is ready for synthesis.")
+            self.cleanup_old_temp_files()
+        else:
+            print("❌ Engine initialization failed.")
         return success
 
     def clone_voice(

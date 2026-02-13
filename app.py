@@ -25,7 +25,7 @@ from voice_cloning_engine import VoiceCloningManager, AudioProcessor
 
 # Import TTS libraries
 try:
-    # Chatterbox TTS (enhanced wrapper in voice_cloning_engine)
+    import chatterbox
     CHATTERBOX_AVAILABLE = True
 except ImportError:
     CHATTERBOX_AVAILABLE = False
@@ -117,20 +117,31 @@ class VoiceCloningApp:
             return False
 
         try:
-            with st.spinner("🔄 Initializing system... (Downloading weights may take a moment)"):
+            st.info("💡 **Note:** On Streamlit Cloud, the first load downloads ~2GB of AI weights. This can take up to 5 minutes. Please do not refresh the page.")
+            
+            with st.status("� System Initialization", expanded=True) as status:
+                st.write("🔍 Checking environment...")
+                time.sleep(1)
+                
+                st.write("📥 Loading AI Model weights (Chatterbox english-v1)...")
                 # Use the existing manager instance
                 success = self.voice_manager.initialize_chatterbox()
+                
                 if success:
+                    st.write("✨ Optimizing audio pipeline...")
                     st.session_state.chatterbox_loaded = True
                     # Cleanup old files on first successful load
                     self.voice_manager.cleanup_old_temp_files()
+                    status.update(label="✅ System Ready!", state="complete", expanded=False)
+                    time.sleep(1)
                     st.rerun()
                     return True
                 else:
-                    st.error("❌ Failed to load Chatterbox TTS model")
+                    status.update(label="❌ Initialization Failed", state="error")
+                    st.error("❌ Failed to load Chatterbox TTS model. This might be due to RAM limits on Streamlit Cloud.")
                     return False
         except Exception as e:
-            st.error(f"❌ Error loading Chatterbox TTS: {str(e)}")
+            st.error(f"❌ Critical Error during initialization: {str(e)}")
             return False
 
     # Legacy methods removed for cleaner code
